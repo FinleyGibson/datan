@@ -1,0 +1,15 @@
+
+[setup]
+
+
+[paths]
+book_dir = "documents/datan_book/"
+book_tables = "documents/datan_book/tables"
+book_figures = "documents/datan_book/figures"
+data_dir = "data/"
+notebook_dir = "src/notebooks/"
+notebook_book_dir = "src/notebooks/book"
+
+
+[book]
+figsize = { "default" = [6.0, 6.0] }

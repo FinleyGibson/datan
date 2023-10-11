@@ -1,0 +1,9 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: markdown/intro
+chapters:
+- file: markdown/markdown
+- file: notebooks/00_example_notebook
+- file: markdown/markdown-notebooks
