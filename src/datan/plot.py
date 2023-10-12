@@ -1,8 +1,16 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import r2_score
 import functools
-from osteop.utils import CONFIG
+from pathlib import Path
+import numpy.typing as npt
+from typing import Iterable
+import toml
 
+DIR_ROOT: Path = Path(__file__).parent.parent.parent
+
+with open(DIR_ROOT / "config.toml", "r") as infile:
+    CONFIG = toml.load(infile)
 
 def optional_axes(figsize=None):
     """
@@ -80,3 +88,27 @@ def yy_plot(ax: plt.Axes, y, y_):
     ax.set_ylabel("Prediction")
     r2 = r2_score(y, y_)
     ax.set_title(r"$R2={:.3f}$".format(r2))
+
+
+@optional_axes(figsize=CONFIG['report']['figsize']['long'])
+def coefficient_significance(ax: plt.Axes,
+                             coefs: Iterable[float],
+                             names: Iterable[str],
+                             absolute: bool = False):
+
+    coefs = np.asarray(coefs).flatten()
+    names = np.asarray(names).flatten()
+    assert coefs.shape == names.shape
+
+    inds = np.argsort(coefs)[::-1]
+    x = names[inds]
+
+    if absolute:
+        y = np.abs(coefs[inds])
+    else:
+        y = coefs[inds]
+
+    ax.scatter(x, y, marker="_")
+    plt.xticks(rotation=90)
+
+
