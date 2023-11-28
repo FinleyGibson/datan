@@ -13,6 +13,7 @@ setup(
         "toml",
         "scikit-learn",
         "matplotlib",
+        "seaborn"
     ],
 )
 

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, confusion_matrix
 import functools
 from pathlib import Path
 import numpy.typing as npt
@@ -11,6 +12,7 @@ DIR_ROOT: Path = Path(__file__).parent.parent.parent
 
 with open(DIR_ROOT / "config.toml", "r") as infile:
     CONFIG = toml.load(infile)
+
 
 def optional_axes(figsize=None):
     """
@@ -111,4 +113,31 @@ def coefficient_significance(ax: plt.Axes,
     ax.scatter(x, y, marker="_")
     plt.xticks(rotation=90)
 
+
+@optional_axes(figsize=CONFIG['report']['figsize']['square'])
+def binary_confusion_matrix(ax: plt.Axes,
+                            y: Iterable[float],
+                            y_: Iterable[float], **kwargs):
+
+    cf_matrix = confusion_matrix(y_, y)
+
+    group_names = ['True Neg', 'False Pos', 'False Neg', 'True Pos']
+
+    group_counts = ["{0:0.0f}".format(value) for value in cf_matrix.flatten()]
+
+    group_percentages = ["{0:.2%}".format(value) for value in
+                         cf_matrix.flatten()/np.sum(cf_matrix)]
+
+    labels = [f"{v1}\n{v2}\n{v3}" for v1, v2, v3 in
+          zip(group_names, group_counts, group_percentages)]
+
+    labels = np.asarray(labels).reshape(2, 2)
+
+    plot_args = {
+        "cmap": "Blues",
+        "fmt": "",
+        }
+    plot_args.update(**kwargs)
+
+    sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=labels, **plot_args, ax=ax)
 
